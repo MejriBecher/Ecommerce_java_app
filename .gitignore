@@ -28,3 +28,16 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### AI / IDE Assistance ###
+.planning/
+graphify-out/
+src/graphify-out/
+PROJECT_MAP.md
+.opencode/
+.claude/
+
+### Build ###
+target/
+out/
+*.class

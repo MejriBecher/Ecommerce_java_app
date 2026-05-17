@@ -48,6 +48,5 @@ public class AuthService {
 
     public boolean estConnecte() { return utilisateurConnecte != null; }
     public boolean estAdmin() { return estConnecte() && "ADMIN".equals(utilisateurConnecte.getRole()); }
-    public boolean estClient() { return estConnecte() && "CLIENT".equals(utilisateurConnecte.getRole()); }
     public Utilisateur getUtilisateurConnecte() { return utilisateurConnecte; }
 }

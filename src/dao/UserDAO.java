@@ -4,8 +4,6 @@ import database.DatabaseConnection;
 import model.Utilisateur;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserDAO {
 
@@ -68,22 +66,4 @@ public class UserDAO {
         return false;
     }
 
-    public List<Utilisateur> getTousLesUtilisateurs() {
-        List<Utilisateur> liste = new ArrayList<>();
-        String sql = "SELECT * FROM utilisateurs";
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                liste.add(new Utilisateur(
-                        rs.getInt("id"), rs.getString("nom"),
-                        rs.getString("email"), rs.getString("mot_de_passe"),
-                        rs.getString("role")
-                ));
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur liste utilisateurs: " + e.getMessage());
-        }
-        return liste;
-    }
 }

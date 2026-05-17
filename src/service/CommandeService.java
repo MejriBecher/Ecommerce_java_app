@@ -6,9 +6,13 @@ import model.LigneCommande;
 import model.Panier;
 import model.Produit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CommandeService {
+    private static final Logger LOG = Logger.getLogger(CommandeService.class.getName());
     private final CommandeDAO commandeDAO = new CommandeDAO();
 
     public boolean passerCommande(int userId, Panier panier) {
@@ -68,5 +72,33 @@ public class CommandeService {
                     c.getId(), c.getUserId(), c.getDate(), c.getTotal(), c.getStatut());
         }
         System.out.println("==============================================");
+    }
+
+    public boolean validerCommande(int commandeId, AuthService auth) {
+        if (!auth.estAdmin()) {
+            LOG.warning("Tentative de validation non-admin par user ID: " + auth.getUtilisateurConnecte().getId());
+            return false;
+        }
+        boolean ok = commandeDAO.updateStatut(commandeId, Commande.Statut.VALIDEE);
+        if (ok) {
+            String ts = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LOG.info("Statut changé | admin=" + auth.getUtilisateurConnecte().getId()
+                    + " | cmd=" + commandeId + " | EN_ATTENTE -> VALIDEE | " + ts);
+        }
+        return ok;
+    }
+
+    public boolean annulerCommande(int commandeId, AuthService auth) {
+        if (!auth.estAdmin()) {
+            LOG.warning("Tentative d'annulation non-admin par user ID: " + auth.getUtilisateurConnecte().getId());
+            return false;
+        }
+        boolean ok = commandeDAO.updateStatut(commandeId, Commande.Statut.ANNULEE);
+        if (ok) {
+            String ts = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LOG.info("Statut changé | admin=" + auth.getUtilisateurConnecte().getId()
+                    + " | cmd=" + commandeId + " | EN_ATTENTE -> ANNULEE | " + ts);
+        }
+        return ok;
     }
 }

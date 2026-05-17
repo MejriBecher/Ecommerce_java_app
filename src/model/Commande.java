@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Commande {
-    public enum Statut { EN_ATTENTE, VALIDEE, LIVREE }
+    public enum Statut { EN_ATTENTE, VALIDEE, ANNULEE, LIVREE }
 
     private int id;
     private int userId;

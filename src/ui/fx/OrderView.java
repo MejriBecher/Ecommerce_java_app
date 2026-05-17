@@ -60,6 +60,46 @@ public class OrderView extends BorderPane {
 
         table.getColumns().addAll(idCol, dateCol, totalCol, statutCol);
 
+        if (isAdmin) {
+            TableColumn<Commande, Commande> actionCol = new TableColumn<>("Actions");
+            actionCol.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
+            actionCol.setCellFactory(col -> new TableCell<>() {
+                private final Button validerBtn = new Button("Valider");
+                private final Button annulerBtn = new Button("Annuler");
+                private final HBox pane = new HBox(6, validerBtn, annulerBtn);
+
+                {
+                    validerBtn.setOnAction(e -> {
+                        Commande cmd = getTableView().getItems().get(getIndex());
+                        if (nav.getCommandeService().validerCommande(cmd.getId(), nav.getAuth())) {
+                            chargerDonnees();
+                        }
+                    });
+                    annulerBtn.setOnAction(e -> {
+                        Commande cmd = getTableView().getItems().get(getIndex());
+                        if (nav.getCommandeService().annulerCommande(cmd.getId(), nav.getAuth())) {
+                            chargerDonnees();
+                        }
+                    });
+                    setAlignment(Pos.CENTER);
+                }
+
+                @Override
+                protected void updateItem(Commande item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                    } else {
+                        boolean enAttente = item.getStatut() == Commande.Statut.EN_ATTENTE;
+                        validerBtn.setVisible(enAttente);
+                        annulerBtn.setVisible(enAttente);
+                        setGraphic(pane);
+                    }
+                }
+            });
+            table.getColumns().add(actionCol);
+        }
+
         table.setRowFactory(tv -> {
             TableRow<Commande> row = new TableRow<>();
             row.setOnMouseClicked(e -> {

@@ -109,6 +109,19 @@ public class CommandeDAO {
         return commandes;
     }
 
+    public boolean updateStatut(int commandeId, Commande.Statut statut) {
+        String sql = "UPDATE commandes SET statut = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, statut.name());
+            ps.setInt(2, commandeId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Erreur mise à jour statut commande #" + commandeId + ": " + e.getMessage());
+        }
+        return false;
+    }
+
     private List<LigneCommande> getLignesCommande(int commandeId) {
         List<LigneCommande> lignes = new ArrayList<>();
         String sql = "SELECT lc.*, p.nom, p.prix, p.stock, p.description " +
